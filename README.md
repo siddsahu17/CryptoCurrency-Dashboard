@@ -4,42 +4,62 @@ A comprehensive cryptocurrency analysis platform featuring real-time data visual
 
 ## Project Architecture
 
-The project is divided into four main modules:
+The project is backend is built with **FastAPI** and is divided into four main modules:
 
-1.  **News Summarizer**: Aggregates and summarizes the latest cryptocurrency news using AI to provide concise market updates.
-2.  **AI Chatbot**: An interactive assistant capable of answering questions about crypto trends, terminology, and specific coin data using OpenAI's LLM.
-3.  **Crypto Visual Dashboard**: A frontend-heavy module for real-time price tracking, charting, and market data visualization.
-4.  **Time Series Forecasting**: Advanced analytics module using historical data to predict future price movements (ARIMA/Prophet/LSTM).
+1.  **News Summarizer**: Aggregates cryptocurrency news (via CoinGecko status updates) and uses OpenAI to provide concise summaries.
+2.  **AI Chatbot**: An interactive assistant powered by OpenAI GPT-3.5-turbo capable of answering questions about crypto trends and general inquiries.
+3.  **Crypto Visual Dashboard**: Provides real-time market data (Top Coins) and historical price charts using the CoinGecko API.
+4.  **Time Series Forecasting**: Uses ARIMA (AutoRegressive Integrated Moving Average) models from `statsmodels` to predict future price movements based on historical data.
 
 ## Tech Stack
 
--   **Frontend**: HTML/JS (Dashboard visuals)
 -   **Backend**: FastAPI (Python)
--   **AI/ML**: OpenAI GPT (for Summarizer & Chatbot), Time Series libraries (Statsmodels/Prophet)
--   **Data**: Crypto APIs (e.g., CoinGecko, Binance)
+-   **AI/LLM**: OpenAI GPT-3.5 Turbo
+-   **Forecasting**: statsmodels (ARIMA)
+-   **Data Provider**: CoinGecko API (No API Key required for basic plan)
+-   **Frontend**: HTML/JS (In progress)
+
+## Directory Structure
+
+```text
+backend/
+├── main.py                 # Application entry point & CORS config
+├── requirements.txt        # Python dependencies
+├── .env                    # Environment variables (OpenAI Key)
+├── routers/                # API Endpoints
+│   ├── news.py             # News & Summarization routes
+│   ├── chat.py             # AI Chat routes
+│   ├── dashboard.py        # Market Data routes
+│   └── forecast.py         # Prediction routes
+└── services/               # Business Logic
+    ├── llm_service.py      # OpenAI Client & Wrapper
+    ├── data_service.py     # CoinGecko API Wrapper
+    └── forecast_model.py   # ARIMA Prediction Logic
+```
 
 ## Getting Started
 
 ### Prerequisites
 
 -   Python 3.9+
--   Node.js (for frontend tooling if applicable)
 -   OpenAI API Key
 
 ### Installation
 
-1.  Clone the repository.
-2.  Navigate to the backend directory:
+1.  Navigate to the backend directory:
     ```bash
     cd backend
     ```
-3.  Install dependencies:
+2.  Install dependencies:
     ```bash
     pip install -r requirements.txt
     ```
-4.  Set up environment variables:
-    -   Create a `.env` file.
-    -   Add `OPENAI_API_KEY=your_key_here`.
+3.  Set up environment variables:
+    -   Create a `.env` file in the `backend/` directory.
+    -   Add your OpenAI API Key:
+        ```
+        OPENAI_API_KEY=sk-your_actual_key_here
+        ```
 
 ### Running the Application
 
@@ -47,3 +67,17 @@ Start the FastAPI server:
 ```bash
 uvicorn main:app --reload
 ```
+
+The API will be available at `http://localhost:8000`.
+You can access the interactive API documentation (Swagger UI) at `http://localhost:8000/docs`.
+
+## API Endpoints Overview
+
+| Module | Method | Endpoint | Description |
+| :--- | :--- | :--- | :--- |
+| **News** | `GET` | `/news/latest` | Fetch latest crypto updates |
+| | `POST` | `/news/summarize` | Summarize given text |
+| **Chat** | `POST` | `/chat/message` | Send message to AI Chatbot |
+| **Dashboard** | `GET` | `/dashboard/market` | Get top coins market data |
+| | `GET` | `/dashboard/history/{id}` | Get historical prices for a coin |
+| **Forecast** | `POST` | `/forecast/predict` | Predict future prices for a coin |
